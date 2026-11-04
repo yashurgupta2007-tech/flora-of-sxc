@@ -1,0 +1,422 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Panel | Flora of SXC</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌿</text></svg>"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="css/style.css" />
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+  </head>
+  <body data-page="admin">
+    <div id="page-transition"><div class="leaf-spinner">🍃</div></div>
+    <div id="header-mount"></div>
+
+    <div class="admin-shell">
+      <!-- LOGIN -->
+      <div class="login-card reveal is-visible" id="login-card">
+        <div class="lock-icon">
+          <i class="fa-solid fa-lock"></i>
+        </div>
+
+        <h2>Faculty Admin Access</h2>
+        <p>
+          Sign in with your authorised college account to manage Flora of SXC.
+        </p>
+
+        <form id="admin-login-form">
+          <div style="text-align: left; margin-bottom: 14px">
+            <label for="admin-email">Email Address</label>
+            <input
+              type="email"
+              id="admin-email"
+              autocomplete="username"
+              placeholder="Enter your authorised email"
+              required
+            />
+          </div>
+
+          <div style="text-align: left; margin-bottom: 18px">
+            <label for="admin-password">Password</label>
+            <input
+              type="password"
+              id="admin-password"
+              autocomplete="current-password"
+              placeholder="Enter your password"
+              required
+            />
+          </div>
+
+          <button
+            type="submit"
+            class="btn btn-primary"
+            id="admin-login-btn"
+            style="width: 100%; justify-content: center"
+          >
+            <i class="fa-solid fa-right-to-bracket"></i>
+            Sign In
+          </button>
+        </form>
+
+        <p class="login-error" id="login-error" role="alert"></p>
+      </div>
+
+      <!-- DASHBOARD -->
+      <div class="admin-dashboard" id="admin-dashboard">
+        <div class="admin-topbar">
+          <h2><i class="fa-solid fa-gauge"></i> Botany Admin Dashboard</h2>
+          <div class="admin-user-chip">
+            <img
+              id="admin-avatar"
+              src=""
+              alt=""
+              style="
+                width: 28px;
+                height: 28px;
+                border-radius: 50%;
+                display: none;
+              "
+            />
+            <span id="admin-email-chip">—</span>
+            <button class="icon-btn" id="logout-btn" title="Sign out">
+              <i class="fa-solid fa-right-from-bracket"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="admin-grid">
+          <!-- FORM -->
+          <div class="form-card">
+            <h3 id="form-title">
+              <i class="fa-solid fa-plus"></i> Add a New Tree
+            </h3>
+            <form id="tree-form">
+              <input type="hidden" id="tree-id" />
+              <div class="form-grid">
+                <div class="form-group">
+                  <label for="f-common_name">Common Name *</label>
+                  <input type="text" name="" required id="f-common_name" />
+                </div>
+                <div class="form-group">
+                  <label for="f-botanical_name">Scientific Name *</label>
+                  <input type="text" name="" required id="f-botanical_name" />
+                </div>
+                <div class="form-group">
+                  <label for="f-plant_type">Plant Type *</label>
+                  <select name="" required id="f-plant_type">
+                    <option value="">Select Plant Type</option>
+                    <option value="Tree">Tree</option>
+                    <option value="Shrub">Shrub</option>
+                    <option value="Herb">Herb</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="f-zone_id">Campus Location *</label>
+                  <select name="" id="f-zone_id" required>
+                    <option value="">Select a campus section</option>
+                  </select>
+                </div>
+
+                <div class="form-group" style="grid-column: 1 / -1">
+                  <label for="f-image-count">Gallery Images</label>
+
+                  <select
+                    id="f-image-count"
+                    onchange="generateGalleryFields(Number(this.value))"
+                  >
+                    <option value="1">1 Image</option>
+                    <option value="2">2 Images</option>
+                    <option value="3" selected>3 Images</option>
+                    <option value="4">4 Images</option>
+                    <option value="5">5 Images</option>
+                  </select>
+
+                  <small>Select how many photos you want for this plant.</small>
+
+                  <div id="gallery-image-fields"></div>
+                </div>
+
+                <div class="form-group">
+                  <label for="f-reason_common_name"
+                    >Reason for Common Name</label
+                  >
+                  <textarea
+                    name=""
+                    rows="4"
+                    id="f-reason_common_name"
+                  ></textarea>
+                </div>
+                <div class="form-group">
+                  <label for="f-scientific_name_meaning"
+                    >Scientific Name & Meaning</label
+                  >
+                  <textarea
+                    name=""
+                    rows="4"
+                    id="f-scientific_name_meaning"
+                  ></textarea>
+                </div>
+                <div class="form-group">
+                  <label for="f-morphology">Morphology</label>
+                  <textarea name="" rows="5" id="f-morphology"></textarea>
+                </div>
+                <div class="form-group">
+                  <label for="f-morphology_reason"
+                    >Reason Behind Morphology</label
+                  >
+                  <textarea
+                    name=""
+                    rows="5"
+                    id="f-morphology_reason"
+                  ></textarea>
+                </div>
+                <div class="form-group">
+                  <label for="f-traditional_uses">Traditional Uses</label>
+                  <textarea id="f-traditional_uses" rows="5"></textarea>
+                </div>
+
+                <div class="form-group">
+                  <label for="f-interesting_facts">Interesting Facts</label>
+                  <textarea id="f-interesting_facts" rows="5"></textarea>
+                </div>
+
+                <div class="form-group">
+                  <label for="f-story">Story Behind the Tree</label>
+                  <textarea id="f-story" rows="5"></textarea>
+                </div>
+              </div>
+
+              <div class="form-actions">
+                <button type="submit" class="btn btn-primary" id="save-btn">
+                  <i class="fa-solid fa-floppy-disk"></i>
+                  Save Tree
+                </button>
+
+                <button
+                  type="button"
+                  class="btn btn-secondary"
+                  id="cancel-edit-btn"
+                  style="display: none"
+                >
+                  Cancel Edit
+                </button>
+              </div>
+
+              <p class="form-msg" id="form-msg" role="status"></p>
+            </form>
+          </div>
+
+          <!-- LIST -->
+
+          <div class="list-card">
+            <h3>
+              <i class="fa-solid fa-list"></i> All Trees (<span id="tree-count"
+                >0</span
+              >)
+            </h3>
+            <div id="admin-tree-list">
+              <div class="loading-state">
+                <div class="spinner"></div>
+                Loading…
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div
+          class="superadmin-panel"
+          id="user-management-panel"
+          style="display: none"
+        >
+          <div class="user-management-header">
+            <div>
+              <span class="section-label">SUPERADMIN</span>
+              <h3>
+                <i class="fa-solid fa-users-gear"></i>
+                User Management
+              </h3>
+              <p>
+                Manage administrators and super administrators of Flora of SXC.
+              </p>
+            </div>
+          </div>
+
+          <div class="user-management-grid">
+            <div class="user-form-card">
+              <h4>
+                <i class="fa-solid fa-user-plus"></i>
+                Add New User
+              </h4>
+
+              <form id="user-management-form">
+                <div class="user-form-field">
+                  <label for="new-user-email">Email Address</label>
+                  <input
+                    type="email"
+                    id="new-user-email"
+                    placeholder="admin@xaviers.edu"
+                    required
+                  />
+                </div>
+
+                <div class="user-form-field">
+                  <label for="new-user-password">Password</label>
+                  <input
+                    type="password"
+                    id="new-user-password"
+                    placeholder="Create a password"
+                    minlength="6"
+                    required
+                  />
+                </div>
+
+                <div class="user-form-field">
+                  <label for="new-user-role">Role</label>
+                  <select id="new-user-role">
+                    <option value="admin">Admin</option>
+                    <option value="super_admin">Superadmin</option>
+                  </select>
+                </div>
+
+                <button
+                  type="submit"
+                  class="btn btn-primary"
+                  id="create-user-btn"
+                >
+                  <i class="fa-solid fa-user-plus"></i>
+                  Create User
+                </button>
+
+                <p class="form-msg" id="user-form-msg"></p>
+              </form>
+            </div>
+
+            <div class="user-list-card">
+              <h4>
+                <i class="fa-solid fa-users"></i>
+                Existing Users
+              </h4>
+
+              <div id="admin-user-list">
+                <div class="loading-state">
+                  <div class="spinner"></div>
+                  Loading users…
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- QR Modal -->
+    <div class="modal-overlay" id="qr-modal">
+      <div class="modal-box">
+        <button class="modal-close" id="qr-modal-close">&times;</button>
+        <h3 id="qr-modal-title">QR Code</h3>
+        <div id="qr-modal-canvas-wrap"></div>
+        <p style="font-size: 0.85rem; color: var(--ink-600)">
+          Print and place this near the tree on campus.
+        </p>
+        <button
+          class="btn btn-dark"
+          id="qr-modal-download"
+          style="width: 100%; justify-content: center; margin-top: 10px"
+        >
+          <i class="fa-solid fa-download"></i> Download PNG
+        </button>
+      </div>
+    </div>
+
+    <div id="footer-mount"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase-config.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/admin-config.js"></script>
+
+    <div id="edit-user-modal" class="edit-user-modal" style="display: none">
+      <div class="edit-user-card">
+        <div class="edit-user-header">
+          <div>
+            <span class="section-label">USER MANAGEMENT</span>
+            <h3>Edit Administrator</h3>
+            <p>Update account details and permissions.</p>
+          </div>
+
+          <button
+            type="button"
+            class="edit-user-close"
+            onclick="closeEditAdminUser()"
+            aria-label="Close"
+          >
+            &times;
+          </button>
+        </div>
+
+        <form id="edit-user-form">
+          <input type="hidden" id="edit-user-id" />
+
+          <div class="user-form-field">
+            <label for="edit-user-email">Email Address</label>
+            <input type="email" id="edit-user-email" required />
+          </div>
+
+          <div class="user-form-field">
+            <label for="edit-user-password">New Password</label>
+            <input
+              type="password"
+              id="edit-user-password"
+              minlength="8"
+              placeholder="Leave blank to keep current password"
+            />
+            <small>Enter at least 8 characters to change the password.</small>
+          </div>
+
+          <div class="user-form-field">
+            <label for="edit-user-role">Role</label>
+            <select id="edit-user-role" required>
+              <option value="admin">Admin</option>
+              <option value="super_admin">Superadmin</option>
+            </select>
+          </div>
+
+          <p id="edit-user-msg" class="form-msg"></p>
+
+          <div class="edit-user-actions">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              onclick="closeEditAdminUser()"
+            >
+              Cancel
+            </button>
+
+            <button
+              type="submit"
+              class="btn btn-primary"
+              id="save-edit-user-btn"
+            >
+              Save Changes
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+    <script src="js/admin.js"></script>
+  </body>
+</html>
